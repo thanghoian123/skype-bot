@@ -1,71 +1,73 @@
+# subprocess.run([ which('scrapy'), "crawl", "skypebot", "-a", "url={url_store}"])
+# This example requires the 'members' and 'message_content' privileged intents to function.
 
-import re
+import json
+import os
+import sys
 
-from scrapy.crawler import CrawlerProcess
-from skpy import Skype, SkypeEventLoop, SkypeNewMessageEvent
+import discord
+from discord.ext import commands
 
-from spiders.skypespider import SkypeBotSpider
+if not os.path.isfile("config.json"):
+    sys.exit("'config.json' not found! Please add it and try again.")
+else:
+    with open("config.json") as file:
+        config = json.load(file)
 
-# process = CrawlerProcess({
-#     'USER_AGENT': 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)'
-# }) 
-process = CrawlerProcess()
+description = '''An example bot to showcase the discord.ext.commands extension
+module.
+There are a number of utility commands being showcased here.'''
 
-class SkypeBot(SkypeEventLoop):
-    def __init__(self, username, password):
-        self.username = username
-        self.password = password
-        self.sk = Skype(self.username, self.password)
-        super(SkypeBot, self).__init__(username, password)
+intents = discord.Intents.all()
+# intents.messages=True
+# intents.message_content=True
 
-    def onEvent(self, event):
-        # print("wait........")
-        if isinstance(event, SkypeNewMessageEvent) \
-                and not event.msg.userId == self.userId:
-                # and "ping" in event.msg.content:
-            regex_order = r"\*order (.+)"
-            regex_store = r"\*store (.+)"
+TOKEN = config['token']
+PREFIX = config['prefix']
+print(PREFIX)
 
-            matches_store = re.finditer(regex_store, event.msg.content, re.MULTILINE)
-            text = event.msg.content.split()
-            link_store = event.msg.content.split('*store')[1]
+bot = commands.Bot(command_prefix=PREFIX, intents=intents, help_command=None)
+# client = discord.Client()
+banned_words = [
+    "cc", "blahh", "blahhh"
+]
 
-            print(event.msg.content,"=====content")
-            if len(text)>0:
-                cmd = text[0]
-                cmd_info = text[1]
-                print(cmd_info,"----------cmd")
-                if cmd.lower() == '*order':
-                    event.msg.chat.sendMsg("ok picked {}".format(link_store))
-                if cmd.lower() == '*store':
-                    print("---------matches_store",matches_store)
-                    process.crawl(SkypeBotSpider,url = link_store)
-                    process.start() 
-                    print("---------finish")
-                    
-                    # the script will block here until the crawling is finished
-                    # event.msg.chat.sendMsg("store {}".format(cmd_info))
-        
-    def connect(self):
-        return Skype(self.username, self.password)
 
-    def create_room(self, group_members):
-        sk = self.connect()
-        user = sk.user  # you
-        contacts = sk.contacts  # your contacts
-        chats = sk.chats  # your conversations
-        print('======group_members', group_members)
+@bot.event
+async def on_ready():
+    print(f'{bot.user} has connected to Discord!')
 
-        # if len(group_members)==0:
-        #     return None
-        ch = chats.create(group_members)
-        print('======vaoday', ch)
-        if ch:
-            return ch
-        return None
 
-    def send_message(self, ch, mess):
-        ch.sendMsg(mess)
+@bot.event
+async def on_message(message):
 
-    def retrieve_message(self, ch):
-        return ch.getMsgs()
+    msg = message.content
+    id = message.channel.id
+    channel = bot.get_channel(id)
+    print(msg, "=======msg")
+    if message.author == bot.user or message.author.bot:
+        return
+    if any(word in msg.lower() for word in banned_words):
+        await message.channel.purge(limit=1)
+        await channel.send('thang mat day')
+    
+    await bot.process_commands(message)
+
+
+@bot.command()
+async def hello(ctx):
+    await ctx.send("hello cc")
+
+@bot.command()
+async def pong(ctx):
+    await ctx.send("ping")
+
+
+@bot.command()
+async def poll(ctx, *, question):
+    await ctx.channel.purge(limit=1)
+    message = await ctx.send(f"```{question} \n✅ = Yes\n❎ = No```")
+    await message.add_reaction('❎')
+    await message.add_reaction('✅')
+
+bot.run(TOKEN)

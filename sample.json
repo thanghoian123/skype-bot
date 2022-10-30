@@ -1,1 +1,42 @@
-[]
+[
+    {
+        "name": "Ram cu\u1ed1n c\u1ea3i - ram th\u1ecbt - 10 c\u00e2y",
+        "price": "45,000"
+    },
+    {
+        "name": "Ram cu\u1ed1n c\u1ea3i -  Ram th\u1ecbt - 15 c\u00e2y",
+        "price": "65,000"
+    },
+    {
+        "name": "Ram cu\u1ed1n c\u1ea3i - Ram chay - 10 c\u00e2y",
+        "price": "45,000"
+    },
+    {
+        "name": "Ram cu\u1ed1n c\u1ea3i- ram chay- 15 c\u00e2y",
+        "price": "65,000"
+    },
+    {
+        "name": "N\u01b0\u1edbc \u00c9p Th\u01a1m",
+        "price": "16,000"
+    },
+    {
+        "name": "N\u01b0\u1edbc cam v\u1eaft",
+        "price": "22,000"
+    },
+    {
+        "name": "D\u1eeba chai nguy\u00ean ch\u1ea5t",
+        "price": "18,000"
+    },
+    {
+        "name": "N\u01b0\u1edbc \u00e9p C\u00f3c",
+        "price": "16,000"
+    },
+    {
+        "name": "N\u01b0\u1edbc Chanh \u0111\u00e1",
+        "price": "15,000"
+    },
+    {
+        "name": "N\u01b0\u1edbc \u00c9p \u1ed4i",
+        "price": "16,000"
+    }
+]
